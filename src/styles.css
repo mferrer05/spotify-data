@@ -1,4 +1,42 @@
 /* You can add global styles to this file, and also import other style files */
 
 @import 'tailwindcss';
-@plugin 'daisyui';
+@plugin 'daisyui' {
+  themes: false;
+}
+@plugin 'daisyui/theme' {
+  name: 'spotify';
+  default: true;
+  prefersdark: true;
+  color-scheme: dark;
+
+  --color-base-100: #121212;
+  --color-base-200: #181818;
+  --color-base-300: #282828;
+  --color-base-content: #ffffff;
+  --color-primary: #1db954;
+  --color-primary-content: #121212;
+  --color-secondary: #535353;
+  --color-secondary-content: #ffffff;
+  --color-accent: #1ed760;
+  --color-accent-content: #121212;
+  --color-neutral: #535353;
+  --color-neutral-content: #ffffff;
+  --color-info: #509bf5;
+  --color-info-content: #ffffff;
+  --color-success: #1db954;
+  --color-success-content: #121212;
+  --color-warning: #ffc862;
+  --color-warning-content: #121212;
+  --color-error: #e91429;
+  --color-error-content: #ffffff;
+
+  --radius-selector: 0.5rem;
+  --radius-field: 0.5rem;
+  --radius-box: 0.5rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 0;
+  --noise: 0;
+}
