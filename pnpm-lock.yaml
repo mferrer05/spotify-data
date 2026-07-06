@@ -45,6 +45,9 @@ importers:
       '@tailwindcss/postcss':
         specifier: ^4.1.12
         version: 4.3.2
+      daisyui:
+        specifier: ^5.6.13
+        version: 5.6.13
       jsdom:
         specifier: ^28.0.0
         version: 28.1.0
@@ -1868,6 +1871,9 @@ packages:
   cssstyle@6.2.0:
     resolution: {integrity: sha512-Fm5NvhYathRnXNVndkUsCCuR63DCLVVwGOOwQw782coXFi5HhkXdu289l59HlXZBawsyNccXfWRYvLzcDCdDig==}
     engines: {node: '>=20'}
+
+  daisyui@5.6.13:
+    resolution: {integrity: sha512-0UHyNG3TzF7pDIbPcWyLKQfgtGhJcIq2x26jwsDKp7ZhL0GwaqIMZ12+TWfp8p+mE4NNc29SJk63hEXTz3MQkg==}
 
   data-urls@7.0.0:
     resolution: {integrity: sha512-23XHcCF+coGYevirZceTVD7NdJOqVn+49IHyxgszm+JIiHLoB2TkmPtsYkNWT1pvRSGkc35L6NHs0yHkN2SumA==}
@@ -4592,6 +4598,8 @@ snapshots:
       '@csstools/css-syntax-patches-for-csstree': 1.1.6(css-tree@3.2.1)
       css-tree: 3.2.1
       lru-cache: 11.5.1
+
+  daisyui@5.6.13: {}
 
   data-urls@7.0.0:
     dependencies:
