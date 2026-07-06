@@ -1,12 +1,12 @@
-import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component } from '@angular/core';
+import { FileUpload } from './components/file-upload';
+import { StatsDashboard } from './components/stats-dashboard';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [FileUpload, StatsDashboard],
   templateUrl: './app.html',
-  styleUrl: './app.css'
+  styleUrl: './app.css',
 })
-export class App {
-  protected readonly title = signal('spotify-data');
-}
+/** Root component of the Spotify Data app. Hosts the file upload and stats dashboard sections. */
+export class App {}

@@ -1,0 +1,292 @@
+@if (hasData()) {
+  <section class="space-y-6">
+    <div class="flex flex-wrap items-baseline justify-between gap-2">
+      <h2 class="text-xl font-bold">Your listening insights</h2>
+      <span class="text-sm text-base-content/60">{{ formatDateRange(stats().dateRange) }}</span>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+      @for (kpi of kpis(); track kpi.label) {
+        <div class="stats bg-base-200 shadow">
+          <div class="stat">
+            <div class="stat-title">{{ kpi.label }}</div>
+            <div class="stat-value text-primary text-2xl">{{ kpi.value }}</div>
+            <div class="stat-desc">{{ kpi.desc }}</div>
+          </div>
+        </div>
+      }
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div class="card bg-base-200 shadow">
+        <div class="card-body">
+          <h3 class="card-title">Top artists</h3>
+          <ol class="space-y-2">
+            @for (item of stats().topArtists; track item.name; let i = $index) {
+              <li class="flex items-center gap-3">
+                <span class="w-6 text-right text-base-content/50 text-sm">{{ i + 1 }}</span>
+                <div class="flex-1 min-w-0">
+                  <div class="flex justify-between gap-2">
+                    <span class="truncate">{{ item.name }}</span>
+                    <span class="text-sm text-base-content/60 whitespace-nowrap"
+                      >{{ formatNumber(item.plays) }} plays</span
+                    >
+                  </div>
+                  <div class="h-2 bg-base-300 rounded-full mt-1 overflow-hidden">
+                    <div
+                      class="h-full bg-primary rounded-full bar-fill"
+                      [style.width.%]="barWidth(item.plays, maxArtistPlays())"
+                    ></div>
+                  </div>
+                </div>
+              </li>
+            }
+          </ol>
+        </div>
+      </div>
+
+      <div class="card bg-base-200 shadow">
+        <div class="card-body">
+          <h3 class="card-title">Top tracks</h3>
+          <ol class="space-y-2">
+            @for (
+              item of stats().topTracks;
+              track item.name + '|' + (item.subtitle ?? '');
+              let i = $index
+            ) {
+              <li class="flex items-center gap-3">
+                <span class="w-6 text-right text-base-content/50 text-sm">{{ i + 1 }}</span>
+                <div class="flex-1 min-w-0">
+                  <div class="flex justify-between gap-2">
+                    <span class="truncate">{{ item.name }}</span>
+                    <span class="text-sm text-base-content/60 whitespace-nowrap"
+                      >{{ formatNumber(item.plays) }} plays</span
+                    >
+                  </div>
+                  <p class="text-xs text-base-content/50 truncate">{{ item.subtitle }}</p>
+                  <div class="h-2 bg-base-300 rounded-full mt-1 overflow-hidden">
+                    <div
+                      class="h-full bg-accent rounded-full bar-fill"
+                      [style.width.%]="barWidth(item.plays, maxTrackPlays())"
+                    ></div>
+                  </div>
+                </div>
+              </li>
+            }
+          </ol>
+        </div>
+      </div>
+
+      <div class="card bg-base-200 shadow">
+        <div class="card-body">
+          <h3 class="card-title">Top albums</h3>
+          <ol class="space-y-2">
+            @for (
+              item of stats().topAlbums;
+              track item.name + '|' + (item.subtitle ?? '');
+              let i = $index
+            ) {
+              <li class="flex items-center gap-3">
+                <span class="w-6 text-right text-base-content/50 text-sm">{{ i + 1 }}</span>
+                <div class="flex-1 min-w-0">
+                  <div class="flex justify-between gap-2">
+                    <span class="truncate">{{ item.name }}</span>
+                    <span class="text-sm text-base-content/60 whitespace-nowrap"
+                      >{{ formatNumber(item.plays) }} plays</span
+                    >
+                  </div>
+                  <p class="text-xs text-base-content/50 truncate">{{ item.subtitle }}</p>
+                  <div class="h-2 bg-base-300 rounded-full mt-1 overflow-hidden">
+                    <div
+                      class="h-full bg-primary rounded-full bar-fill"
+                      [style.width.%]="barWidth(item.plays, maxAlbumPlays())"
+                    ></div>
+                  </div>
+                </div>
+              </li>
+            }
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <div class="card bg-base-200 shadow">
+      <div class="card-body">
+        <h3 class="card-title">Listening over time</h3>
+        <div class="flex items-end gap-1 h-56 overflow-x-auto pt-8 pb-2">
+          @for (point of stats().listeningByMonth; track point.month) {
+            <div class="flex flex-col items-center justify-end h-full gap-1 min-w-10">
+              <div
+                class="tooltip tooltip-top w-5 bg-accent rounded-t-sm"
+                [style.height.px]="barHeight(point.ms, maxMonthMs(), 160)"
+                [attr.data-tip]="formatDuration(point.ms)"
+              ></div>
+              <span class="text-[10px] text-base-content/50 whitespace-nowrap">{{
+                point.month.slice(2)
+              }}</span>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <section class="space-y-4">
+      <div class="flex flex-wrap items-center gap-3">
+        <label for="year-select" class="text-sm font-medium text-base-content/70">Year</label>
+        <select
+          id="year-select"
+          class="select select-bordered select-primary select-sm w-32"
+          (change)="onYearChange($event)"
+        >
+          @for (year of availableYears(); track year) {
+            <option [value]="year" [selected]="year === selectedYear()">{{ year }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="card bg-base-200 shadow">
+        <div class="card-body">
+          <h3 class="card-title">Top artists in {{ selectedYear() }}</h3>
+          @if (yearTopArtists().length === 0) {
+            <p class="text-base-content/60 text-sm">No artist data for this year.</p>
+          } @else {
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              @for (item of yearTopArtists(); track item.name; let i = $index) {
+                <div class="card bg-base-100 shadow-sm">
+                  <div class="card-body py-4 gap-2">
+                    <span class="badge badge-primary badge-sm w-8 justify-center">{{ i + 1 }}</span>
+                    <h4 class="card-title text-base truncate" [title]="item.name">
+                      {{ item.name }}
+                    </h4>
+                    <p class="text-sm text-base-content/60 mt-auto">
+                      {{ formatNumber(item.plays) }} plays
+                    </p>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="card bg-base-200 shadow">
+        <div class="card-body">
+          <h3 class="card-title">Top songs in {{ selectedYear() }}</h3>
+          @if (yearTopTracks().length === 0) {
+            <p class="text-base-content/60 text-sm">No song data for this year.</p>
+          } @else {
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              @for (
+                item of yearTopTracks();
+                track item.name + '|' + (item.subtitle ?? '');
+                let i = $index
+              ) {
+                <div class="card bg-base-100 shadow-sm">
+                  <div class="card-body py-4 gap-2">
+                    <span class="badge badge-accent badge-sm w-8 justify-center">{{ i + 1 }}</span>
+                    <h4
+                      class="card-title text-base truncate"
+                      [title]="item.name + (item.subtitle ? ' \u2014 ' + item.subtitle : '')"
+                    >
+                      {{ item.name }}
+                    </h4>
+                    @if (item.subtitle) {
+                      <p class="text-xs text-base-content/50 truncate" [title]="item.subtitle">
+                        {{ item.subtitle }}
+                      </p>
+                    }
+                    <p class="text-sm text-base-content/60 mt-auto">
+                      {{ formatNumber(item.plays) }} plays
+                    </p>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="card bg-base-200 shadow">
+        <div class="card-body">
+          <h3 class="card-title">Top artist &amp; song per month</h3>
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+            @for (cell of monthlyCalendar(); track cell.name) {
+              <div class="card bg-base-100 shadow-sm">
+                <div class="card-body py-3 px-3 gap-2">
+                  <p class="text-sm text-base-content/50 uppercase tracking-wide">
+                    {{ cell.name }}
+                  </p>
+                  @if (!cell.hasListening) {
+                    <p class="text-sm text-base-content/40">No data</p>
+                  } @else {
+                    @if (cell.artist; as artist) {
+                      <div>
+                        <span class="text-xs text-base-content/50">Top artist</span>
+                        <p class="text-sm font-semibold truncate" [title]="artist.name">
+                          {{ artist.name }}
+                          <span class="text-xs font-normal text-base-content/50"
+                            >· {{ formatNumber(artist.plays) }} plays</span
+                          >
+                        </p>
+                      </div>
+                    }
+                    @if (cell.track; as track) {
+                      <div>
+                        <span class="text-xs text-base-content/50">Top song</span>
+                        <p
+                          class="text-sm truncate"
+                          [title]="track.name + (track.subtitle ? ' \u2014 ' + track.subtitle : '')"
+                        >
+                          {{ track.name }}
+                          <span class="text-xs text-base-content/50"
+                            >· {{ formatNumber(track.plays) }} plays</span
+                          >
+                        </p>
+                      </div>
+                    }
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </section>
+  </section>
+} @else if (loading()) {
+  <section class="space-y-6">
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+      @for (i of [0, 1, 2, 3, 4, 5]; track i) {
+        <div class="stats bg-base-200 shadow">
+          <div class="stat gap-1">
+            <div class="skeleton h-4 w-20"></div>
+            <div class="skeleton h-8 w-24"></div>
+            <div class="skeleton h-3 w-16"></div>
+          </div>
+        </div>
+      }
+    </div>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      @for (i of [0, 1, 2]; track i) {
+        <div class="card bg-base-200 shadow">
+          <div class="card-body gap-2">
+            <div class="skeleton h-6 w-32"></div>
+            @for (j of [0, 1, 2, 3, 4]; track j) {
+              <div class="skeleton h-4 w-full"></div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  </section>
+} @else {
+  <section class="card bg-base-200">
+    <div class="card-body items-center text-center gap-2 py-12">
+      <h2 class="card-title">No data yet</h2>
+      <p class="text-base-content/70 max-w-md">
+        Upload one or more <code>Streaming_History_Audio_*.json</code> files from your Spotify
+        privacy export to see your listening insights.
+      </p>
+    </div>
+  </section>
+}
