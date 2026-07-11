@@ -8,5 +8,5 @@ import { StatsDashboard } from './components/stats-dashboard';
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
-/** Root component of the Spotify Data app. Hosts the file upload and stats dashboard sections. */
+/** Root component of the Spotify History app. Hosts the file upload and stats dashboard sections. */
 export class App {}
